@@ -16,7 +16,7 @@ class State(object):
         prev_illegal = False
         while not self.board.is_game_over():
             clear()
-            print('Chess 0.1')
+            print('TensorChess 0.1')
             if self.board.turn:
                 toplay = "White"
             else:
