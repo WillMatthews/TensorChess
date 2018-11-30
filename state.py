@@ -47,9 +47,9 @@ class State(object):
         legalmoves = [self.board.san(move) for move in self.board.legal_moves]
         return legalmoves
 
-    def engine_move(self):
+    def engine_move(self,search=2):
         self.engine.position(self.board)
-        enginemoves = self.engine.go(depth=2)
+        enginemoves = self.engine.go(depth=search)
         return enginemoves
 
     def uci_2_move(self,uci):

@@ -20,16 +20,23 @@
     <script src="static/js/chessboard.js"></script>
     <script src="static/js/chess.js"></script>
   <script>
+
+      var ws = new WebSocket("ws://localhost:5000/selfplay");
+      var rungame = function() {
+          ws.send("bon voyage");
+      };
+
+
     var init = function() {
       var gameID = "" + Math.round((new Date()).getTime() / 1000) + Math.random();
 
-      var ws = new WebSocket("ws://localhost:5000/chesssocket");
 
       ws.onmessage = function (evt) {
         var recieved_msg = evt.data;
         console.log(recieved_msg);
         game.move(recieved_msg);
         board.position(game.fen());
+        updateStatus();
       }
 
       var board,
@@ -38,40 +45,12 @@
           fenEl = $('#fen'),
           pgnEl = $('#pgn');
 
-      // do not pick up pieces if the game is over
-      // only pick up pieces for the side to move
-      var onDragStart = function(source, piece, position, orientation) {
-          if (game.game_over() === true ||
-                  (game.turn() === 'w' && piece.search(/^b/) !== -1)) //||
-                  //(game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-              {return false;
-              }
-      };
-
-      var onDrop = function(source, target) {
-          // see if the move is legal
-          var move = game.move({
-                from: source,
-                to: target,
-                promotion: 'q' // NOTE: always promote to a queen for example simplicity
-              });
-
-          // illegal move
-          if (move === null) return 'snapback';
-
-          updateStatus();
-        
-          console.log(move);
-          movecopy = $.extend( true, {}, move );
-          movecopy.gameID = gameID; 
-          ws.send(JSON.stringify(movecopy));
+      var rungame = function() {
+          ws.send("bon voyage");
       };
 
       // update the board position after the piece snap 
       // for castling, en passant, pawn promotion
-      var onSnapEnd = function() {
-          board.position(game.fen());
-      };
 
       var updateStatus = function() {
           var status = '';
@@ -109,11 +88,7 @@
 
 
       var cfg = {
-        draggable: true,
         position: 'start',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd,
         sparePieces: false
       };
 
@@ -124,5 +99,6 @@
     }; // end init()
 $(document).ready(init);
   </script>
+  <a href = "javascript:rungame()">Run Game</a>
   </body>
 </html>

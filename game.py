@@ -5,7 +5,7 @@ from flask import Flask
 from flask_sockets import Sockets
 import json
 import random
-
+import time
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -14,6 +14,11 @@ sockets = Sockets(app)
 @app.route("/")
 def webpage():
     ret = open("index.html").read()
+    return ret
+
+@app.route("/compvcomp")
+def compvcomp():
+    ret = open("compvcomp.html").read()
     return ret
 
 @sockets.route("/chesssocket")
@@ -40,6 +45,21 @@ def chesssocket(ws):
         print("Move pushed to client: " + mv_socket)
         print("6")
         ws.send(mv_socket)
+
+@sockets.route("/selfplay")
+def chesssocket(wss):
+    s = State()
+    msg = wss.receive()
+    while not wss.closed:
+        time.sleep(0.4)
+        setdepth = random.randint(1,4)
+        moves = s.engine_move(search=setdepth)
+        movestr = str(moves[0])
+        move = s.uci_2_move(movestr)
+        mv_socket = s.board.san(move)
+        s.board.push(move)
+        print("Move pushed to client: " + mv_socket)
+        wss.send(mv_socket)
 
 
 @app.route("/rand")
