@@ -47,9 +47,10 @@ def chesssocket(ws):
 def chesssocket(wss):
     s = State()
     msg = wss.receive()
-    while not wss.closed:
+    while not wss.closed and not s.board.is_game_over():
+        print(msg)
         time.sleep(0.4)
-        setdepth = random.randint(1,4)
+        setdepth = random.randint(1,6)
         moves = s.engine_move(search=setdepth)
         movestr = str(moves[0])
         move = s.uci_2_move(movestr)
@@ -57,6 +58,7 @@ def chesssocket(wss):
         s.board.push(move)
         print("Move pushed to client: " + mv_socket)
         wss.send(mv_socket)
+        msg = wss.receive()
 
 
 @app.route("/rand")

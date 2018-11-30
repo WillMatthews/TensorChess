@@ -37,6 +37,7 @@
         game.move(recieved_msg);
         board.position(game.fen());
         updateStatus();
+        ws.send("send move please");
       }
 
       var board,
