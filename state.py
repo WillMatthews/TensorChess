@@ -1,5 +1,6 @@
 import chess
 import chess.svg
+import chess.uci
 import os
 
 clear = lambda: os.system('clear')
@@ -10,7 +11,9 @@ class State(object):
             self.board = chess.Board()
         else:
             self.board = board
-
+        self.engine =  chess.uci.popen_engine('./stockfish/stockfish-9-64')
+        self.engine.uci()
+        self.Move = chess.Move
 
     def gameloop(self):
         prev_illegal = False
@@ -40,6 +43,15 @@ class State(object):
                 gamemove = self.board.parse_san(mv)
                 self.board.push(gamemove)
 
-    def showpiece(self):
-        """Generate SVG graphics for the flask app??"""
+    def san_legal_moves(self):
+        legalmoves = [self.board.san(move) for move in self.board.legal_moves]
+        return legalmoves
+
+    def engine_move(self):
+        self.engine.position(self.board)
+        enginemoves = self.engine.go(depth=2)
+        return enginemoves
+
+    def uci_2_move(self,uci):
+        return self.Move.from_uci(uci)
 

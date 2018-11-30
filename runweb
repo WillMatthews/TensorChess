@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+x-www-browser "http://localhost:5000"
+FLASK_APP=game.py flask run

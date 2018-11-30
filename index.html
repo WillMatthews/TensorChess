@@ -21,6 +21,15 @@
     <script src="static/js/chess.js"></script>
   <script>
     var init = function() {
+      var gameID = "" + Math.round((new Date()).getTime() / 1000) + Math.random();
+
+      var ws = new WebSocket("ws://localhost:5000/chesssocket");
+
+      ws.onmessage = function (evt) {
+        var recieved_msg = evt.data;
+        console.log(recieved_msg)
+        game.move(recieved_msg)
+      }
 
       var board,
           game = new Chess(),
@@ -32,9 +41,9 @@
       // only pick up pieces for the side to move
       var onDragStart = function(source, piece, position, orientation) {
           if (game.game_over() === true ||
-                  (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                  (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                return false;
+                  (game.turn() === 'w' && piece.search(/^b/) !== -1)) //||
+                  //(game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+              {return false;
               }
       };
 
@@ -50,6 +59,11 @@
           if (move === null) return 'snapback';
 
           updateStatus();
+        
+          console.log(move);
+          movecopy = $.extend( true, {}, move );
+          movecopy.gameID = gameID; 
+          ws.send(JSON.stringify(movecopy));
       };
 
       // update the board position after the piece snap 

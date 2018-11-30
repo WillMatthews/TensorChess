@@ -14,3 +14,7 @@ A tensorflow-based zero knowledge chess engine
 + Define a suitable feature vector for the board state
 + Start work on zero knowledge ML for this chess application
 + Consider some learned chess ML as well?
+
+
+
+Established on the 10th anniversary of Stockfish
