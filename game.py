@@ -13,13 +13,15 @@ sockets = Sockets(app)
 
 @app.route("/")
 def webpage():
-    ret = open("index.html").read()
+    ret = open("htmls/index.html").read()
     return ret
+
 
 @app.route("/compvcomp")
 def compvcomp():
-    ret = open("compvcomp.html").read()
+    ret = open("htmls/compvcomp.html").read()
     return ret
+
 
 @sockets.route("/chesssocket")
 def chesssocket(ws):
@@ -31,11 +33,6 @@ def chesssocket(ws):
         msgdict = json.loads(message)
         gamemove = s.board.parse_san(msgdict["san"])
         s.board.push(gamemove)
-        # reply with a random move
-        #legalmoves = s.san_legal_moves()
-        #RANDMOVE = legalmoves[random.randrange(len(legalmoves))]
-        #print(RANDMOVE)
-        #s.board.push(s.board.parse_san(RANDMOVE))
 
         moves = s.engine_move()
         movestr = str(moves[0])
@@ -43,8 +40,8 @@ def chesssocket(ws):
         mv_socket = s.board.san(move)
         s.board.push(move)
         print("Move pushed to client: " + mv_socket)
-        print("6")
         ws.send(mv_socket)
+
 
 @sockets.route("/selfplay")
 def chesssocket(wss):
@@ -64,7 +61,7 @@ def chesssocket(wss):
 
 @app.route("/rand")
 def randgame():
-    ret = open("randgame.html").read()
+    ret = open("htmls/randgame.html").read()
     return ret
 
 
@@ -73,13 +70,3 @@ if __name__ == "__main__":
     from geventwebsocket.handler import WebSocketHandler
     server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
     server.serve_forever()
-
-#
-# if __name__ == "__main__":
-#     s = State()
-#     winner = s.gameloop()
-#     if winner:
-#         winstr = "White"
-#     else:
-#         winstr = "Black"
-#     print(winstr + " Wins!")
