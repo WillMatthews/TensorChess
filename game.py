@@ -11,20 +11,40 @@ app = Flask(__name__)
 sockets = Sockets(app)
 
 
+#### WEB PAGES
+
 @app.route("/")
 def webpage():
     ret = open("htmls/index.html").read()
     return ret
 
 
-@app.route("/compvcomp")
+@app.route("/stockself")
 def compvcomp():
-    ret = open("htmls/compvcomp.html").read()
-    return ret
+    generic = open("htmls/generic.html").read()
+    brd  = open("htmls/stockself.html").read()
+    return generic.replace("<!--placeboard-->",brd)
 
+
+@app.route("/stocksurvive")
+def stockfish_survival():
+    generic = open("htmls/generic.html").read()
+    brd  = open("htmls/stocksurvive.html").read()
+    return generic.replace("<!--placeboard-->",brd)
+
+
+@app.route("/rand")
+def randgame():
+    generic = open("htmls/generic.html").read()
+    brd  = open("htmls/randboard.html").read()
+    return generic.replace("<!--placeboard-->",brd)
+
+
+
+####### WEBSOCKETS
 
 @sockets.route("/chesssocket")
-def chesssocket(ws):
+def stockfish_survival_socket(ws):
     s = State()
     while not ws.closed:
         # parse the websocket for the move made by player
@@ -34,6 +54,7 @@ def chesssocket(ws):
         gamemove = s.board.parse_san(msgdict["san"])
         s.board.push(gamemove)
 
+        time.sleep(0.3)
         moves = s.engine_move()
         movestr = str(moves[0])
         move = s.uci_2_move(movestr)
@@ -44,7 +65,7 @@ def chesssocket(ws):
 
 
 @sockets.route("/selfplay")
-def chesssocket(wss):
+def stockfish_selfplay_socket(wss):
     s = State()
     msg = wss.receive()
     while not wss.closed and not s.board.is_game_over():
@@ -59,12 +80,6 @@ def chesssocket(wss):
         print("Move pushed to client: " + mv_socket)
         wss.send(mv_socket)
         msg = wss.receive()
-
-
-@app.route("/rand")
-def randgame():
-    ret = open("htmls/randgame.html").read()
-    return ret
 
 
 if __name__ == "__main__":

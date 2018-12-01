@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="static/css/fontsettings.css">
 <link rel="stylesheet" href="static/css/font-awesome.css">
 <link rel="stylesheet" href="static/css/chessboard.css">
-<link rel="shortcut icon" href="static/favicon.ico">
 <script src="static/js/jquery-1.10.1.min.js"></script>
+<link rel="shortcut icon" href="static/favicon.ico">
 <base href="http://localhost:5000" />
 <style>
 body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
@@ -16,40 +16,29 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .fa-anchor,.fa-coffee {font-size:200px}
 </style>
 
+
 <script> 
       $(function(){
               $("#include_navbar").load("static/html/navbar.html"); 
             });
 </script> 
 
+
 <body>
 
 <!-- Navbar -->
 
-
 <div id="include_navbar"></div>
-
-
-<!-- Header -->
-<header class="w3-container w3-red w3-center" style="padding:128px 16px">
-  <h1 class="w3-margin w3-jumbo">MChess</h1>
-  <p class="w3-xlarge">A website of chess experiments</p>
-  <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Coming Soon</button>
-</header>
 
 <!-- First Grid -->
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>What is MChess?</h1>
-      <h5 class="w3-padding-32">Work on MChess began on the 10th anniversary of Stockfish.
-The main goal is to develop my 'TensorChess' engine, to explore work on zero-knowledge machine learning.</h5>
-
-      <p class="w3-text-grey">This project also allows me to explore work on CSS, JS, Flask and many other things I never really got the chance to play with before. This is a learning exercise for me, and if sucessful may blossom into a rather fun chess website.</p>
+    <div class="w3-twothird w3-center">
+        <!--placeboard-->
     </div>
 
     <div class="w3-third w3-center">
-      <i class="fas fa-10x fa-chess w3-padding-64 w3-text-red"></i>
+      scoreboard here
     </div>
   </div>
 </div>
@@ -57,22 +46,10 @@ The main goal is to develop my 'TensorChess' engine, to explore work on zero-kno
 <!-- Second Grid -->
 <div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
   <div class="w3-content">
-    <div class="w3-third w3-center">
-      <i class="fas fa-10x fa-chess-knight w3-padding-64 w3-text-red w3-margin-right"></i>
-    </div>
-
-    <div class="w3-twothird">
-      <h1>What is TensorChess?</h1>
-      <h5 class="w3-padding-32">AlphaZero showed the world that chess can be learned by a machine with zero knowledge of the game.</h5>
-
-      <p class="w3-text-grey">TensorChess will be an ongoing project to make a zero-knowledge engine that can be run on inexpensive hardware.</p>
-    </div>
+    Analytics here
   </div>
 </div>
 
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-    <h1 class="w3-margin w3-xlarge">“Chess is the struggle against the error.” – Johannes Zukertort</h1>
-</div>
 
 <!-- Footer -->
 <footer class="w3-container w3-padding-64 w3-center w3-opacity">  

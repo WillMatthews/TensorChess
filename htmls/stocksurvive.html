@@ -1,22 +1,6 @@
-<!doctype html>
-<html>
-  <head>
-      <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-          <title>JS Board</title>
-            <base href="http://localhost:5000" />
-              <link rel="shortcut icon" href="static/favicon.ico">
-              <link rel="stylesheet" href="static/css/chessboard.css" />
-  </head>
-  <body>
-
-    <p>Test Chessboard.
-    </p>
-
     <div id="board" style="width: 400px"></div>
 
     <script src="static/js/json3.min.js"></script>
-    <script src="static/js/jquery-1.10.1.min.js"></script>
     <script src="static/js/chessboard.js"></script>
     <script src="static/js/chess.js"></script>
   <script>
@@ -102,9 +86,9 @@
 
           updateStatus();
         
-          console.log(move);
           movecopy = $.extend( true, {}, move );
-          movecopy.gameID = gameID; 
+          movecopy.gameID = gameID;
+          console.log(movecopy);
           ws.send(JSON.stringify(movecopy));
       };
 
@@ -167,5 +151,3 @@
     }; // end init()
 $(document).ready(init);
   </script>
-  </body>
-</html>
