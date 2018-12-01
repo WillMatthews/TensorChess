@@ -1,6 +1,15 @@
 # TENSORCHESS
 A tensorflow-based zero knowledge chess engine and online chess game interface
 
+
+### Website Structure
+
++ Index
+  + Multiplayer
+  + TensorChess Challenge
+  + Stockfish Survival
+  + Random Chess
+
 ### TODOs
 
 - [x] Setup a usable interface to the 'chessboard' for a user.
