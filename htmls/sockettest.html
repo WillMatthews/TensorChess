@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+  <meta charset="utf-8" />
+  <title>WebSocket Test</title>
+  <base href="http://localhost:5000" />
+  <script src="static/js/jquery-1.10.1.min.js"></script>
+  <script src="static/js/json3.min.js"></script>
+  <script language="javascript" type="text/javascript">
+
+
+var contents = "{example data size for the average communication (realistic maximum)}"
+var ws = new WebSocket("ws://localhost:5000/echosocket");
+
+var runtest = function() {
+  ws.send(contents);
+	document.getElementById("packet").innerHTML = contents;
+};
+
+
+var init = function() {
+
+  var count = 0;
+  var oldtime = Math.round((new Date()).getTime() / 1000);
+
+
+
+  ws.onmessage = function (evt) {
+    var recieved_msg = evt.data;
+   	var time = Math.round((new Date()).getTime() / 1000);
+
+    if (time == oldtime) {
+      count++
+    } else {
+      //console.log(count)
+			document.getElementById("socketcount").innerHTML = count + " Hz";
+      count = 0;
+     	oldtime = time;
+    }
+
+    ws.send(recieved_msg);
+  }
+
+
+}
+
+$(document).ready(init);
+  </script>
+
+  <h2>WebSocket Test</h2>
+
+  <a href = "javascript:runtest()">Start Websocket Communications</a>
+
+ <p>Packet Round Trip Frequency:</p>
+  <p id="socketcount"></p>
+	
+ <p>Packet Contents:</p>
+	<p id="packet"></p>

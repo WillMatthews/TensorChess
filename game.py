@@ -82,6 +82,27 @@ def stockfish_selfplay_socket(wss):
         msg = wss.receive()
 
 
+
+
+###### DEBUG
+
+
+@app.route("/sockettest")
+def socket_test():
+    ret  = open("htmls/sockettest.html").read()
+    return ret
+
+
+@sockets.route("/echosocket")
+def echo(wse):
+    while not wse.closed:
+        msg = wse.receive()
+        wse.send(msg)
+
+
+
+##### server main
+
 if __name__ == "__main__":
     from gevent import pywsgi
     from geventwebsocket.handler import WebSocketHandler
