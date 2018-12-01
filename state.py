@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import chess
 import chess.svg
 import chess.uci
