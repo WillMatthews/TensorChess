@@ -14,6 +14,7 @@
         console.log(recieved_msg);
         game.move(recieved_msg);
         board.position(game.fen());
+        updateStatus();
       }
 
       var board,
@@ -126,7 +127,7 @@
                         }
               }
 
-          statusEl.html(status);
+        statusEl.html(status);
           fenEl.html(game.fen());
           pgnEl.html(game.pgn());
       };

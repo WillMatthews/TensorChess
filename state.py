@@ -36,9 +36,9 @@ class State(object):
         return legalmoves
 
 
-    def stockfish_move(self,search=2):
+    def stockfish_move(self,search=2,thinktime=1000):
         self.engine.position(self.board)
-        enginemoves = self.engine.go(depth=search)
+        enginemoves = self.engine.go(movetime=thinktime,depth=search)
         return enginemoves
 
 

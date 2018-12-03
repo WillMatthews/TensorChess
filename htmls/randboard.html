@@ -20,13 +20,51 @@
           var randomIndex = Math.floor(Math.random() * (possibleMoves.length+1));
           game.move(possibleMoves[randomIndex]);
           board.position(game.fen());
+          updateStatus();
 
           window.setTimeout(makeRandomMove, 300);
       };
 
       board = ChessBoard('board', 'start');
+          statusEl = $('#status'),
+          fenEl = $('#fen'),
+          pgnEl = $('#pgn');
+
 
       window.setTimeout(makeRandomMove, 300);
+
+      var updateStatus = function() {
+          var status = '';
+
+          var moveColor = 'White';
+          if (game.turn() === 'b') {
+                moveColor = 'Black';
+              }
+
+          // checkmate?
+            if (game.in_checkmate() === true) {
+                  status = 'Game over, ' + moveColor + ' is in checkmate.';
+                }
+
+          // draw?
+            else if (game.in_draw() === true) {
+                  status = 'Game over, drawn position';
+                }
+
+          // game still on
+          else {
+                status = moveColor + ' to move';
+
+                // check?
+                  if (game.in_check() === true) {
+                          status += ', ' + moveColor + ' is in check';
+                        }
+              }
+
+        statusEl.html(status);
+          fenEl.html(game.fen());
+          pgnEl.html(game.pgn());
+      };
 
     }; // end init()
 $(document).ready(init);

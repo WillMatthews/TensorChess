@@ -44,6 +44,48 @@ def randgame():
 
 ####### WEBSOCKETS
 
+# PLAN:
+    # > move all comms to the "/common" socket and use multithreading
+    # > destroy game on websocket close, TREAT AS A RESIGNATION
+    # > log all games to DB
+@sockets.route("/common")
+def commoncomms(ws):
+    while not ws.closed:
+        message = ws.receive()
+        msgdict = json.loads(message)
+        if msgdict["new"] == "true":
+            s = State()
+            if msgdict["mode"] == "random":
+                pass
+                # play random game here
+            elif msgdict["mode"] == "pvp":
+                pass
+                # play player-vs-player game here
+                # need database interaction mode? inter-thread comms?
+            elif msgdict["mode"] == "pvc":
+                # play player-vs-computer game here
+                if msgdict["compmode"] == "tensor":
+                    pass
+                elif msgdict["compmode"] == "stockfish":
+                    pass
+                else:
+                    pass # return a "something went wrong" to user with an error code
+
+            if msgdict["setcol"] == "white":
+                pass # code here to set board for player to white
+            elif msgdict["setcol"] == "black":
+                pass # code here to set board for player to black
+                # if unset pass a "somemthing went wrong" to user with an error code
+
+        # reply with JSON object:
+            # > Chat messages
+            # > If moves made
+            # > Moves made
+            # > Analysis
+            # > Game ID !!!! (need a reliable method of generating for the DB
+
+
+
 @sockets.route("/chesssocket")
 def stockfish_survival_socket(ws):
     s = State()
@@ -60,7 +102,7 @@ def stockfish_survival_socket(ws):
         gamemove = s.board.parse_san(msgdict["san"])
         s.board.push(gamemove)
         time.sleep(0.3)
-        moves = s.stockfish_move(search=setdepth)
+        moves = s.stockfish_move(thinktime=1,search=setdepth)
         movestr = str(moves[0])
         move = s.uci_2_move(movestr)
         mv_socket = s.board.san(move)
