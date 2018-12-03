@@ -4,6 +4,7 @@ import chess
 import chess.svg
 import chess.uci
 import os
+import random
 
 clear = lambda: os.system('clear')
 
@@ -17,43 +18,31 @@ class State(object):
         self.engine.uci()
         self.Move = chess.Move
 
-    def gameloop(self):
-        prev_illegal = False
-        while not self.board.is_game_over():
-            clear()
-            print('TensorChess 0.1')
-            if self.board.turn:
-                toplay = "White"
-            else:
-                toplay = "Black"
-            print(toplay + " to play\n\n")
+    def random_move(self):
+        legalmoves = [move for move in self.board.legal_moves]
+        return random.choice(legalmoves)
 
-            print(self.board)
 
-            if prev_illegal:
-                print("\nIllegal, enter a new move")
-                prev_illegal = False
+    def is_move_legal(self,move):
+        legalmoves = san_legal_moves(self)
+        if move in legalmoves:
+            return True
+        else:
+            return False
 
-            mv = input("\nMake your move:  ")
-
-            legalmoves = [self.board.san(move) for move in self.board.legal_moves]
-            if mv.lower() == "resign":
-                return(~ self.board.turn)
-            if mv not in legalmoves:
-                prev_illegal = True
-            else:
-                gamemove = self.board.parse_san(mv)
-                self.board.push(gamemove)
 
     def san_legal_moves(self):
         legalmoves = [self.board.san(move) for move in self.board.legal_moves]
         return legalmoves
 
-    def engine_move(self,search=2):
+
+    def stockfish_move(self,search=2):
         self.engine.position(self.board)
         enginemoves = self.engine.go(depth=search)
         return enginemoves
 
+
     def uci_2_move(self,uci):
         return self.Move.from_uci(uci)
+
 
