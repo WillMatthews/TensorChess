@@ -13,7 +13,7 @@
       // on message callback
       ws.onmessage = function (evt) {
         var recieved_msg = evt.data;
-        console.log(recieved_msg);
+        //console.log(recieved_msg);
         game.move(recieved_msg);
         board.position(game.fen());
         updateStatus();
@@ -25,8 +25,9 @@
           statusEl = $('#status'),
           fenEl = $('#fen'),
           pgnEl = $('#pgn'),
-          bCapEl = $('#wcap'),
-          wCapEl = $('#bcap');
+          balCapEl = $('#balcap'),
+          bCapEl = $('#bcap'),
+          wCapEl = $('#wcap');
 
       // define all the required sounds
       var captureSound = new Audio('static/sound/Capture.mp3');
@@ -113,7 +114,7 @@
         
           movecopy = $.extend( true, {}, move );
           movecopy.gameID = gameID;
-          console.log(movecopy);
+          //console.log(movecopy);
           ws.send(JSON.stringify(movecopy));
       };
 
@@ -124,17 +125,31 @@
       };
 
       // generates the captured pieces section
-      var capturedPieces = function(){
-        let bPieces = [ '♔', '♕', '♖', '♗', '♘', '♙' ];
-        let wPieces = [ '♚', '♛', '♜', '♝', '♞', '♟' ];
+      var capturedPieces = function() {
+        let bCapPieces = [ '♔', '♕', '♖', '♗', '♘', '♙' ];
+        let wCapPieces = [ '♚', '♛', '♜', '♝', '♞', '♟' ];
         let types = ['k','q','r','b','n','p'];
-       // var wPieces = { q: ♕, k: ♔, b: ♗, n: ♘, r: ♖, p: ♙ };
-       // var bPieces = { q: ♛, k: ♚, b: ♝, n: ♞, r: ♜, p: ♟ };
+        let scores = [999,9,5,3,3,1];
+
+        // Individual pieces:
+        // Pawn - 1 point
+        // Knight - 3 points
+        // Bishop - 3 points
+        // Rook - 5 points
+        // Queen - 9 points
+        //
+        // Piece combinations:
+        // Rook and Knight - 7.5 points
+        // Rook and Bishop - 8 points
+        // Pair of Rooks - 10 points
+        // Three minor pieces - 10 points
+        // Rook and two minor pieces - 11 points
+
         let bCaps = "";
         let wCaps = "";
         let moves = game.history({ verbose: true });
-        for (i = 0; i < moves.length; i++){
-          if ('captured' in moves[i]){
+        for (i = 0; i < moves.length; i++) {
+          if ('captured' in moves[i]) {
             if (moves[i].color == 'w') {
               wCaps += moves[i].captured;
             } else {
@@ -142,25 +157,52 @@
             }
           }
         }
-        let captureSet = {w: "", b: ""},
-            wcount,
-            bcount;
-        for (i = 0; i < types.length; i++){
-          wcount = (wCaps.match(new RegExp(types[i], "g")) || []).length;
-          bcount = (bCaps.match(new RegExp(types[i], "g")) || []).length;
-          if (wcount){
-          captureSet.w += wPieces[i].repeat(wcount);
+
+        let captureSet = {w: "", b: "", wCapScore: 0, bCapScore: 0, scoreBal: 0, pieceBal: ""},
+            wCount,
+            bCount;
+
+        for (i = 0; i < types.length; i++) {
+          wCount = (wCaps.match(new RegExp(types[i], "g")) || []).length;
+          bCount = (bCaps.match(new RegExp(types[i], "g")) || []).length;
+          if (wCount) {
+            captureSet.w += wCapPieces[i].repeat(wCount);
+            captureSet.wCapScore += scores[i] * wCount;
           }
-          if (bcount){
-          captureSet.b += bPieces[i].repeat(bcount);
+          if (bCount) {
+            captureSet.b += bCapPieces[i].repeat(bCount);
+            captureSet.bCapScore += scores[i] * bCount;
           }
         }
-        if ( !captureSet.b ){
-          captureSet.b = "-";
+
+        captureSet.scoreBal += captureSet.wCapScore - captureSet.bCapScore;
+
+        if (captureSet.scoreBal <= 0) {
+          var workingSet = bCapPieces;
+        } else {
+          var workingSet = wCapPieces;
         }
-        if ( !captureSet.w ){
-          captureSet.w = "-";
+
+        let absScoreBal = Math.abs(captureSet.scoreBal);
+        let pieceBal = ""; 
+
+        while (absScoreBal > 0) { 
+          if (absScoreBal >= 9) {        // add queen
+            pieceBal += workingSet[1]; 
+            absScoreBal += -9;
+          } else if (absScoreBal >= 5) { // add rook
+            pieceBal += workingSet[2];
+            absScoreBal += -5;
+          } else if (absScoreBal >= 3) { // add minor piece
+            pieceBal += workingSet[3];
+            absScoreBal += -3;
+          } else {                      // add pawn
+            pieceBal += workingSet[5];
+            absScoreBal += -1;
+          }
         }
+
+        captureSet.pieceBal = pieceBal;
         return captureSet;
       }
 
@@ -176,6 +218,8 @@
           noteSound.play();
 
           // if we need to play the captured sound
+          // this looks jank but the problem is this sound takes too long and 
+          // we need to reset the time otherwise it will not play
         } else if ( 'captured' in prevmove) {
             if (captureSound.paused) {
               captureSound.play();
@@ -219,9 +263,10 @@
           pgnEl.html(game.pgn());
 
           // update captured pieces 
-          let captureset = capturedPieces();
-          wCapEl.html(captureset.w);
-          bCapEl.html(captureset.b);
+          let captureSet = capturedPieces();
+          wCapEl.html(captureSet.w + captureSet.wCapScore);
+          bCapEl.html(captureSet.b + captureSet.bCapScore);
+          balCapEl.html(captureSet.pieceBal + captureSet.scoreBal);
       };
 
 // board config settings
