@@ -37,7 +37,7 @@ A tensorflow-based zero knowledge chess engine, with an online chess game interf
     - [x] Display a live FEN string for the board, for each move.
     - [x] Display a move list.
     - [ ] Display a basic analysis.
-    - [ ] Display 'pieces in pocket' for each side.
+    - [x] Display 'pieces in pocket' for each side.
     - [ ] Add move sounds.
     - [ ] Add a 'scroll back' method.
     - [ ] Allow user to choose the colour of their game pieces.

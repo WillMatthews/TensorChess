@@ -24,7 +24,9 @@
           game = new Chess(),
           statusEl = $('#status'),
           fenEl = $('#fen'),
-          pgnEl = $('#pgn');
+          pgnEl = $('#pgn'),
+          bCapEl = $('#wcap'),
+          wCapEl = $('#bcap');
 
       var previousMove = function() {
         var moves = game.history({ verbose: true });
@@ -106,6 +108,48 @@
           board.position(game.fen());
       };
 
+      var capturedPieces = function(){
+        var bPieces = [ '♔', '♕', '♖', '♗', '♘', '♙' ];
+        var wPieces = [ '♚', '♛', '♜', '♝', '♞', '♟' ];
+        var types = ['k','q','r','b','n','p'];
+       // var wPieces = { q: ♕, k: ♔, b: ♗, n: ♘, r: ♖, p: ♙ };
+       // var bPieces = { q: ♛, k: ♚, b: ♝, n: ♞, r: ♜, p: ♟ };
+        var bCaps = "";
+        var wCaps = "";
+        var moves = game.history({ verbose: true });
+        for (i = 0; i < moves.length; i++){
+          if ('captured' in moves[i]){
+            if (moves[i].color == 'w') {
+              wCaps += moves[i].captured;
+            } else {
+              bCaps += moves[i].captured;
+            }
+          }
+        }
+        var captureSet = {w: "", b: ""},
+            wcount,
+            bcount;
+        for (i = 0; i < types.length; i++){
+          wcount = (wCaps.match(new RegExp(types[i], "g")) || []).length;
+          bcount = (bCaps.match(new RegExp(types[i], "g")) || []).length;
+          if (wcount){
+          captureSet.w += wPieces[i].repeat(wcount);
+          }
+          if (bcount){
+          captureSet.b += bPieces[i].repeat(bcount);
+          }
+        }
+        if ( !captureSet.b ){
+          captureSet.b = "-";
+        }
+        if ( !captureSet.w ){
+          captureSet.w = "-";
+        }
+        return captureSet;
+
+
+      }
+
       var updateStatus = function() {
           var prevmove = previousMove();
           boardEL.find('.square-55d63').removeClass('highlight-prevmove');
@@ -142,6 +186,11 @@
         statusEl.html(status);
           fenEl.html(game.fen());
           pgnEl.html(game.pgn());
+
+
+          var captureset = capturedPieces();
+          wCapEl.html(captureset.w);
+          bCapEl.html(captureset.b);
       };
 
 
