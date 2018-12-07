@@ -28,20 +28,31 @@
           bCapEl = $('#wcap'),
           wCapEl = $('#bcap');
 
+      // define all the required sounds
+      var captureSound = new Audio('static/sound/Capture.mp3');
+      var moveSound = new Audio('static/sound/Move.mp3');
+      var noteSound = new Audio('static/sound/GenericNotify.mp3');
+      captureSound.volume = 1;
+      moveSound.volume = 1;
+      noteSound.volume = 1;
+
+      // obtain JSON object of move that just happened
       var previousMove = function() {
-        var moves = game.history({ verbose: true });
-        var previous = moves.length-1;
+        let moves = game.history({ verbose: true });
+        let previous = moves.length-1;
         return moves[previous];
       }
 
+      // clear possible move highlighting
       var removeGreySquares = function() {
           $('#board .square-55d63').css('background', '');
       };
 
+      // possible move highlighting
       var greySquare = function(square) {
-          var squareEl = $('#board .square-' + square);
+          let squareEl = $('#board .square-' + square);
           
-          var background = '#a9a9a9';
+          let background = '#a9a9a9';
           if (squareEl.hasClass('black-3c85d') === true) {
                 background = '#696969';
               }
@@ -49,9 +60,10 @@
           squareEl.css('background', background);
       };
 
+      // possible move highlighting
       var onMouseoverSquare = function(square, piece) {
           // get list of possible moves for this square
-          var moves = game.moves({
+          let moves = game.moves({
                 square: square,
                 verbose: true
               });
@@ -68,10 +80,13 @@
               }
       };
 
+      // clear possible move highlighting
       var onMouseoutSquare = function(square, piece) {
           removeGreySquares();
       };
 
+
+      // chessboard.js logic for dealing with picking up pieces
 
       // do not pick up pieces if the game is over or is the turn of black
       // only pick up pieces for the side to move
@@ -86,10 +101,10 @@
       var onDrop = function(source, target) {
         removeGreySquares();
           // see if the move is legal
-          var move = game.move({
+          let move = game.move({
                 from: source,
                 to: target,
-                promotion: 'q' // NOTE: always promote to a queen for example simplicity
+                promotion: 'q' // NOTE: always promote to a queen for example simplicity - THIS WILL NEED AN UPDATE TO SELECT WHAT TO PROMOTE TO
               });
 
           // illegal move return, else proceed and update status and push move to server
@@ -108,15 +123,16 @@
           board.position(game.fen());
       };
 
+      // generates the captured pieces section
       var capturedPieces = function(){
-        var bPieces = [ '♔', '♕', '♖', '♗', '♘', '♙' ];
-        var wPieces = [ '♚', '♛', '♜', '♝', '♞', '♟' ];
-        var types = ['k','q','r','b','n','p'];
+        let bPieces = [ '♔', '♕', '♖', '♗', '♘', '♙' ];
+        let wPieces = [ '♚', '♛', '♜', '♝', '♞', '♟' ];
+        let types = ['k','q','r','b','n','p'];
        // var wPieces = { q: ♕, k: ♔, b: ♗, n: ♘, r: ♖, p: ♙ };
        // var bPieces = { q: ♛, k: ♚, b: ♝, n: ♞, r: ♜, p: ♟ };
-        var bCaps = "";
-        var wCaps = "";
-        var moves = game.history({ verbose: true });
+        let bCaps = "";
+        let wCaps = "";
+        let moves = game.history({ verbose: true });
         for (i = 0; i < moves.length; i++){
           if ('captured' in moves[i]){
             if (moves[i].color == 'w') {
@@ -126,7 +142,7 @@
             }
           }
         }
-        var captureSet = {w: "", b: ""},
+        let captureSet = {w: "", b: ""},
             wcount,
             bcount;
         for (i = 0; i < types.length; i++){
@@ -146,19 +162,33 @@
           captureSet.w = "-";
         }
         return captureSet;
-
-
       }
 
+      // updates the 'status', including previous move highlighting, sound, captured pieces and more
       var updateStatus = function() {
-          var prevmove = previousMove();
+          let prevmove = previousMove();
           boardEL.find('.square-55d63').removeClass('highlight-prevmove');
           boardEL.find('.square-' + prevmove.from).addClass('highlight-prevmove');
           boardEL.find('.square-' + prevmove.to).addClass('highlight-prevmove');
           
-          var status = '';
+        if ( game.in_checkmate() || game.in_draw() ) {
+          moveSound.play();
+          noteSound.play();
 
-          var moveColor = 'White';
+          // if we need to play the captured sound
+        } else if ( 'captured' in prevmove) {
+            if (captureSound.paused) {
+              captureSound.play();
+            } else {
+              captureSound.currentTime = 0;
+          }
+        } else {
+          moveSound.play();
+        }
+
+          let status = '';
+
+          let moveColor = 'White';
           if (game.turn() === 'b') {
                 moveColor = 'Black';
               }
@@ -183,18 +213,18 @@
                         }
               }
 
-        statusEl.html(status);
+          // update status, FEN, and PGN
+          statusEl.html(status);
           fenEl.html(game.fen());
           pgnEl.html(game.pgn());
 
-
-          var captureset = capturedPieces();
+          // update captured pieces 
+          let captureset = capturedPieces();
           wCapEl.html(captureset.w);
           bCapEl.html(captureset.b);
       };
 
-
-
+// board config settings
       var cfg = {
         draggable: true,
         position: 'start',
