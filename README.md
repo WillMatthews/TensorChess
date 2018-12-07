@@ -29,6 +29,10 @@ A tensorflow-based zero knowledge chess engine, with an online chess game interf
     + Download all games
 
 
+Screenshot of the 'Stockfish Survival' page:
+![screenshot](https://github.com/WillMatthews/TensorChess/raw/master/src/common/static/img/screenshot.png "One of the many avaliable modes"
+
+
 
 ### TODOs
 
