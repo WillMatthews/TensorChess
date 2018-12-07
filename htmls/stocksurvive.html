@@ -3,12 +3,14 @@
     <script src="static/js/json3.min.js"></script>
     <script src="static/js/chessboard.js"></script>
     <script src="static/js/chess.js"></script>
+
   <script>
     var init = function() {
+      // define the ID of the game created (will be useful for multiplayer)
       var gameID = "" + Math.round((new Date()).getTime() / 1000) + Math.random();
-
       var ws = new WebSocket("ws://localhost:5000/chesssocket");
 
+      // on message callback
       ws.onmessage = function (evt) {
         var recieved_msg = evt.data;
         console.log(recieved_msg);
@@ -18,11 +20,17 @@
       }
 
       var board,
+          boardEL = $('#board')
           game = new Chess(),
           statusEl = $('#status'),
           fenEl = $('#fen'),
           pgnEl = $('#pgn');
 
+      var previousMove = function() {
+        var moves = game.history({ verbose: true });
+        var previous = moves.length-1;
+        return moves[previous];
+      }
 
       var removeGreySquares = function() {
           $('#board .square-55d63').css('background', '');
@@ -82,9 +90,8 @@
                 promotion: 'q' // NOTE: always promote to a queen for example simplicity
               });
 
-          // illegal move
+          // illegal move return, else proceed and update status and push move to server
           if (move === null) return 'snapback';
-
           updateStatus();
         
           movecopy = $.extend( true, {}, move );
@@ -100,6 +107,11 @@
       };
 
       var updateStatus = function() {
+          var prevmove = previousMove();
+          boardEL.find('.square-55d63').removeClass('highlight-prevmove');
+          boardEL.find('.square-' + prevmove.from).addClass('highlight-prevmove');
+          boardEL.find('.square-' + prevmove.to).addClass('highlight-prevmove');
+          
           var status = '';
 
           var moveColor = 'White';
