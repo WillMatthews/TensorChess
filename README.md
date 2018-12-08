@@ -38,7 +38,7 @@ Screenshot of the 'Stockfish Survival' page:
 
 ##### UI and Client Mechanics
 - [x] Setup a usable interface to the 'chessboard' for a user.
-    - [x] Display a live FEN string for the board, for each move.
+    - [x] Display a live PGN string for the board, for each move.
     - [x] Display a move list.
     - [ ] Display a basic analysis.
     - [x] Display 'pieces in pocket' for each side.
@@ -49,14 +49,14 @@ Screenshot of the 'Stockfish Survival' page:
     - [ ] Make navigation bar work properly (currently thinks its always on Home).
     - [x] Make navigation bar collapse properly and not obscure board.
     - [ ] Prettify move list.
-    - [ ] Prettify FEN display.
+    - [ ] Prettify PGN display.
 - [ ] Add method for allowing 'takebacks' against Stockfish / other users.
 - [ ] Add method for allowing 'resigns' against Stockfish / other users.
 - [ ] Add a public, unlogged chat.
 - [ ] Setup a very basic game analysis (Use stockfish or similar to analyse positions on-server)
 - [ ] Setup an opening practise zone.
 - [ ] Setup an endgame practise zone.
-- [ ] Add a 'load from FEN' mode.
+- [ ] Add a 'load from FEN' method.
 
 ##### Server Mechanics
 - [ ] Add a 'Common' websocket communication protocol.
