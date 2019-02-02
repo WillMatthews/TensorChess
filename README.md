@@ -1,5 +1,8 @@
 # TENSORCHESS
-A tensorflow-based zero knowledge chess engine, with an online chess game interface thrown in for free
+A tensorflow-based zero knowledge chess engine, with an online chess game interface thrown in for free.
+
+## Status
+In Development! NOT AN MVP YET. No zero knowlege engine is employed yet.
 
 
 ### Website Structure
